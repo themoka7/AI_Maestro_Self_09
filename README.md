@@ -56,11 +56,13 @@ node tools/check.js out/SYS_CODE_MNG              # XML 파싱 + 스크립트 �
 - 주소: https://themoka7.github.io/AI_Maestro_Self_09/
 - 진입점: 저장소 루트의 `index.html`
 
-### 설정 방법
+### 배포 방식
 
-1. **Settings → General → Default branch** 에서 ⇄ 버튼을 눌러 `main` 을 선택하고 **Update** 를 누릅니다.
-2. **Settings → Pages** 에서 Source 를 **Deploy from a branch**, 브랜치를 **`main` / `/ (root)`** 로 지정하고 **Save** 를 누릅니다.
-3. 1~2분 뒤 위 주소에서 생성기가 열립니다. `main` 에 푸시할 때마다 자동으로 다시 배포됩니다.
+`.github/workflows/pages.yml` 이 `main` 에 푸시될 때마다 GitHub Actions 로 자동 배포합니다. (Actions 탭의 "Deploy Pages")
+
+- **Settings → Pages → Source** 는 **GitHub Actions** 로 둡니다.
+- 사이트에 올라가는 파일: `index.html`, `assets/`, `config/`, `specs/` (에이전트·스킬 파일은 올라가지 않음)
+- 수동으로 다시 배포하려면 Actions → Deploy Pages → **Run workflow**
 
 ### 로컬에서 보기
 
