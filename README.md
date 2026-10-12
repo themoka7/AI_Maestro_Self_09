@@ -1,3 +1,5 @@
+> **AI 마에스트로 7회차 제출물** · 다음 회차(8회차): [themoka7/AI_Maestro_Self_10](https://github.com/themoka7/AI_Maestro_Self_10) — 이 시제품의 실업무 도입 검토
+
 # WebSquare 화면 개발 공통 에이전트
 
 부산대 학사/행정 시스템(WebSquare 5 + 사내 공통 프레임워크 + SQL Server) 화면·SP 개발을 위한 도구 모음입니다.
@@ -44,6 +46,18 @@ node tools/check.js out/SYS_CODE_MNG              # XML 파싱 + 스크립트 �
 - `alertFn` — 알림 함수 (기본 `alert`)
 
 저장 SP의 감사 컬럼(`INSERT_ID/IP/DT`, `UPDATE_ID/IP/DT`)과 `JSON_DATA` 전달 방식도 사내 저장 표준과 대조가 필요합니다. 생성기는 이런 항목을 "확인 필요"로 항상 표시합니다.
+
+## 검증 상태
+
+| 항목 | 상태 |
+|---|---|
+| 사내 템플릿 기본값 (`config/ws-config.json` `settings.verified`) | `false` — 미검증 |
+| 실업무 적용 | **1건 적용** — AI 교과목 이수율 조회 화면 (공문 요청, 8회차 [01-효과검증 1.2](https://github.com/themoka7/AI_Maestro_Self_10/blob/main/docs/01-%ED%9A%A8%EA%B3%BC%EA%B2%80%EC%A6%9D.md)) |
+| 검증 범위 | **TODO** |
+
+- 8회차 기록에는 "7회차 에이전트 + 개인 생성·설명 스킬로 처리"했다고만 있다. 이 저장소의 생성기(`index.html`, `tools/gen.js`)를 썼는지, 사내 템플릿 값(UDC 태그·init, 공통코드 컬럼명, 저장 패턴)을 실제 화면에서 확인했는지는 기록이 없다.
+- 검증 범위를 채울 때 적을 것: 사용한 경로(웹 생성기 / CLI / 에이전트·스킬), 실제 화면에서 확인한 설정 항목, 생성물에서 수정한 부분.
+- `settings.verified` 는 위 항목을 확인한 뒤에만 `true` 로 바꾼다.
 
 ## 공통코드 셋팅
 
