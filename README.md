@@ -13,7 +13,7 @@
 
 ## 사용 흐름
 
-1. **웹에서 설계** — GitHub Pages 주소에서 화면 유형 카드를 고르고, 디자인·조회조건·컬럼·공통코드를 채웁니다. 오른쪽 미리보기에 레이아웃이 바로 그려집니다.
+1. **웹에서 설계** — [화면 생성기](https://themoka7.github.io/AI_Maestro_Self_09/)에서 화면 유형 카드를 고르고, 디자인·조회조건·컬럼·공통코드를 채웁니다. 오른쪽 미리보기에 레이아웃이 바로 그려집니다.
 2. **에이전트 요청문 복사** — "에이전트 요청문" 탭을 복사해 Claude Code에 붙여넣습니다.
 3. **에이전트가 완성** — `websquare-dev` 가 명세를 `specs/` 에 저장하고 `tools/gen.js` 로 초안을 만든 뒤 실제 테이블·사내 패턴에 맞춰 다듬고 `tools/check.js` 로 검사합니다.
 
@@ -53,4 +53,19 @@ node tools/check.js out/SYS_CODE_MNG              # XML 파싱 + 스크립트 �
 
 ## GitHub Pages
 
-저장소 루트의 `index.html` 이 진입점입니다. Pages 소스가 이 파일이 있는 브랜치의 `/ (root)` 로 설정돼 있어야 합니다. 로컬에서 볼 때는 `python3 -m http.server` 로 띄우세요(파일로 직접 열면 설정·예제 fetch 가 막힙니다).
+- 주소: https://themoka7.github.io/AI_Maestro_Self_09/
+- 진입점: 저장소 루트의 `index.html`
+
+### 설정 방법
+
+1. **Settings → General → Default branch** 에서 ⇄ 버튼을 눌러 `main` 을 선택하고 **Update** 를 누릅니다.
+2. **Settings → Pages** 에서 Source 를 **Deploy from a branch**, 브랜치를 **`main` / `/ (root)`** 로 지정하고 **Save** 를 누릅니다.
+3. 1~2분 뒤 위 주소에서 생성기가 열립니다. `main` 에 푸시할 때마다 자동으로 다시 배포됩니다.
+
+### 로컬에서 보기
+
+```bash
+python3 -m http.server 8000   # http://localhost:8000
+```
+
+파일을 브라우저로 직접 열면(file://) 설정·예제 fetch 가 막혀 기본값으로만 동작합니다.
