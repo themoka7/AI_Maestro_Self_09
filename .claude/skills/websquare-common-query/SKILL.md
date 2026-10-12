@@ -91,21 +91,34 @@ common.ajax_request({
 
 ## 6. 화면 레이아웃 클래스 (업무 화면 표준)
 
+실제 렌더링 DOM(데이터조회 화면)에서 확인한 구조. `wq_uuid` 자동 id 요소는 XML 원본, 이름 id·id 없는 요소는 프레임워크가 넣는 것.
+
 ```
-search-box
- └ b-table-box flex-col-4          (한 줄 4칸, flex-col-2 는 2칸)
-    └ b-row-box
-       └ b-row-item                (merge-2: 2칸 병합, b-blank: 빈칸)
-          ├ b-title-box > w2:textbox tagname="label" (필수면 class="req")
-          └ b-con-box   > 컴포넌트 (콤보·입력 class="form-control")
-sec sec-2 > sec-header(title-box, btn-box) + sec-body > gridView class="full-height"
-안내문구: xf:group class="label-box" > w2:textbox class="info-txt02 mb-0" tagname="p"
+content
+ └ sec sec-1
+    ├ sec-header for-main      ← breadcrumb·h2 화면제목·아이콘줄은 프레임워크가 주입
+    │   └ udc_top_auth_btn     ← 렌더 결과: btn-box > btn btn-primary(조회), btn btn-outline-primary(엑셀)
+    └ sec-body
+       ├ search-box
+       │  └ b-table-box flex-col-4          (한 줄 4칸, flex-col-2 는 2칸)
+       │     └ b-row-box
+       │        └ b-row-item                (merge-2: 2칸 병합, b-blank: 빈칸)
+       │           ├ b-title-box > w2:textbox tagname="label" (필수면 class="req")
+       │           └ b-con-box   > 컴포넌트 (콤보·입력 class="form-control")
+       ├ label-box > w2:textbox class="info-txt02 mb-0" tagname="p" style="white-space:pre-line;"
+       └ sec sec-2
+          ├ sec-header
+          │  ├ header-gr > title-box > w2:textbox class="sec-title" tagname="h3"
+          │  │            (옆의 접기 아이콘·"(총 N건)" label-box-total 은 프레임워크가 주입)
+          │  └ btn-box  > w2:trigger class="btn btn-outline-primary" 등
+          └ sec-body > gr > gridView class="full-height"
 ```
 
 - 학년도는 `w2:spinner skin="type1" buttonSize="30" min="1996" max="2100"`
 - 마지막 줄 칸 수가 모자라면 `b-row-item b-blank` 로 채워야 레이아웃이 안 깨짐
-
----
+- 버튼은 bootstrap 계열: `btn btn-primary`, `btn btn-outline-primary`, 버튼 사이 간격은 공통 CSS가 처리
+- 사내 공통 CSS 유틸: `form-w-xxl`(200px)·`form-w-xxxl`(300px), `height-3h`~`height-5h`(vh 높이), `td-height-2`~`5`(그리드 행 높이), `label.info`(ⓘ 표시), `resizer-wrap > resizer-left / resizer-bar / resizer-right`(좌우 분할), `novisible`, `pointer`
+- 포인트 색 `#014a98`, 편집 가능 그리드 셀은 공통 CSS가 포인트 색 10% 배경을 자동 적용
 
 ## 7. 메타 기반 공통 데이터 조회
 

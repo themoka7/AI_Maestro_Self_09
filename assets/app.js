@@ -393,7 +393,7 @@
 
   function compLabel(c) {
     switch (c.type) {
-      case 'SYEAR': return '◀ ' + new Date().getFullYear() + ' ▶';
+      case 'SYEAR': return String(new Date().getFullYear());
       case 'SELECT': case 'TERM': case 'YEAR': return (c.req ? '선택' : '전체') + ' ▾';
       case 'DATE': return 'YYYY-MM-DD 📅';
       case 'YM': return 'YYYY-MM 📅';
@@ -418,14 +418,14 @@
 
   function wfGrid(title, cols, opt) {
     var visible = cols.filter(function (c) { return !c.hidden; });
-    var html = '<div class="wf-sec"><h4>' + escHtml(title) + '<small>' + (opt.edit ? '편집 그리드' : '조회 전용') + '</small></h4><div class="wf-table"><table><thead><tr>';
+    var html = '<div class="wf-sec"><h4><span>' + escHtml(title) + '</span><em>(총 <b>0</b>건)</em><small>' + (opt.edit ? '편집 그리드' : '조회 전용') + '</small></h4><div class="wf-table"><table><thead><tr>';
     if (opt.rowNum) html += '<th>No</th>';
     if (opt.edit) html += '<th>상태</th>';
     visible.forEach(function (c) { html += '<th style="min-width:' + Math.min(c.width || 80, 220) * 0.6 + 'px">' + escHtml(c.nm || c.id) + '</th>'; });
     html += '</tr></thead><tbody>';
     for (var r = 0; r < 3; r++) {
       html += '<tr>';
-      if (opt.rowNum) html += '<td>' + (r + 1) + '</td>';
+      if (opt.rowNum) html += '<td class="no">' + (r + 1) + '</td>';
       if (opt.edit) html += '<td></td>';
       visible.forEach(function (c) {
         var ed = opt.edit && c.edit && c.edit !== 'none';
@@ -433,7 +433,7 @@
       });
       html += '</tr>';
     }
-    if (!visible.length) html += '<tr><td>컬럼을 추가하세요</td></tr>';
+    if (!visible.length) html += '<tr><td class="empty">조회된 데이터가 없습니다.</td></tr>';
     return html + '</tbody></table></div></div>';
   }
 
@@ -446,7 +446,8 @@
       html += '<div class="wf-meta">공통 데이터 조회 화면(<b>commQueryView</b>)에서 아래처럼 보입니다. 화면 XML은 만들지 않고, <b>조회 SP</b>와 <b>메타 등록값</b>을 생성합니다.</div>';
     } else {
       var edit = t === 'edit' || t === 'grid-form' || ((t === 'md-tb' || t === 'md-lr') && s.dcols.some(function (c) { return c.edit !== 'none'; }));
-      html += '<div class="wf-top"><i class="on">조회</i>' + (edit ? '<i class="on">신규</i><i class="on">삭제</i><i class="on">저장</i>' : '') + (d.excel ? '<i class="on">엑셀</i>' : '') + '</div>';
+      html += '<div class="wf-page"><div class="wf-crumb">Home › 학사 › … </div><div class="wf-head"><h3>' + escHtml(s.info.screenNm || '화면명') + '</h3>' +
+        '<div class="wf-top"><i>조회</i>' + (edit ? '<i>신규</i><i>삭제</i><i>저장</i>' : '') + (d.excel ? '<i class="xls">엑셀</i>' : '') + '</div></div></div>';
     }
     var cells = G.condCells(s).map(function (cell) {
       return { label: cell.label, req: cell.req, boxes: cell.conds.map(compLabel) };

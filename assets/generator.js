@@ -309,7 +309,7 @@
     var cells = spec.cols.filter(function (c) { return !c.hidden; }).map(function (c) {
       return { label: c.nm, req: c.req, comps: [formComp(c)] };
     });
-    return '<xf:group class="search-box">\n' + indent(tableBox(cells, Number(spec.design.searchCols) || 4), 4) + '\n</xf:group>';
+    return tableBox(cells, Number(spec.design.searchCols) || 4);
   }
 
   function gridXml(gid, dlt, cols, opt) {
@@ -356,16 +356,21 @@
     return out.join('\n');
   }
 
-  function section(title, body, extraClass, style) {
-    return '<xf:group class="sec sec-2' + (extraClass || '') + '"' + (style ? ' style="' + style + '"' : '') + '>\n' +
+  /* sec sec-2 : 실제 화면 DOM 기준 (sec-header > header-gr > title-box, sec-body > gr) */
+  function section(title, body, style) {
+    return '<xf:group class="sec sec-2"' + (style ? ' style="' + style + '"' : '') + '>\n' +
       '    <xf:group class="sec-header">\n' +
-      '        <xf:group class="title-box">\n' +
-      '            <w2:textbox label="' + esc(title) + '" tagname="h3"></w2:textbox>\n' +
+      '        <xf:group class="header-gr">\n' +
+      '            <xf:group class="title-box">\n' +
+      '                <w2:textbox class="sec-title" label="' + esc(title) + '" tagname="h3"></w2:textbox>\n' +
+      '            </xf:group>\n' +
       '        </xf:group>\n' +
       '        <xf:group class="btn-box"></xf:group>\n' +
       '    </xf:group>\n' +
       '    <xf:group class="sec-body">\n' +
-      indent(body, 8) + '\n' +
+      '        <xf:group class="gr">\n' +
+      indent(body, 12) + '\n' +
+      '        </xf:group>\n' +
       '    </xf:group>\n' +
       '</xf:group>';
   }
@@ -643,23 +648,26 @@
     var t = spec.screenType;
     var info = spec.info;
     var body = [];
-    body.push(s.udcBodyTag);
     var sbx = searchBox(spec);
     if (sbx) body.push(sbx);
     if (spec.design.guide && spec.design.guideText) {
-      body.push('<xf:group class="label-box">\n' +
-        spec.design.guideText.split('\n').filter(Boolean).map(function (l) {
-          return '    <w2:textbox class="info-txt02 mb-0" label="' + esc(l) + '" tagname="p"></w2:textbox>';
-        }).join('\n') + '\n</xf:group>');
+      body.push('<xf:group class="label-box" style="margin-top:8px;">\n' +
+        '    <w2:textbox class="info-txt02 mb-0" style="white-space:pre-line;" label="' +
+        esc(spec.design.guideText.replace(/\r/g, '')).replace(/\n/g, '&#10;') + '" tagname="p"></w2:textbox>\n' +
+        '</xf:group>');
     }
     var g1 = gridXml('grd_01', 'dlt_01', spec.cols, spec.design);
     if (t === 'md-tb') {
       body.push(section(info.masterTitle || '마스터', g1));
       body.push(section(info.detailTitle || '상세', gridXml('grd_02', 'dlt_02', spec.dcols, spec.design)));
     } else if (t === 'md-lr') {
-      body.push('<xf:group style="display:flex;gap:16px;">\n' +
-        indent(section(info.masterTitle || '마스터', g1, '', 'flex:1;min-width:0;'), 4) + '\n' +
-        indent(section(info.detailTitle || '상세', gridXml('grd_02', 'dlt_02', spec.dcols, spec.design), '', 'flex:1;min-width:0;'), 4) + '\n' +
+      body.push('<xf:group class="resizer-wrap">\n' +
+        '    <xf:group class="resizer-left" style="width:50%;">\n' +
+        indent(section(info.masterTitle || '마스터', g1, 'width:100%;'), 8) + '\n' +
+        '    </xf:group>\n' +
+        '    <xf:group class="resizer-right">\n' +
+        indent(section(info.detailTitle || '상세', gridXml('grd_02', 'dlt_02', spec.dcols, spec.design), 'width:100%;'), 8) + '\n' +
+        '    </xf:group>\n' +
         '</xf:group>');
     } else if (t === 'grid-form') {
       var gridOnly = spec.cols.map(function (c) { var o = {}, k; for (k in c) o[k] = c[k]; o.edit = 'none'; return o; });
@@ -668,6 +676,16 @@
     } else {
       body.push(section(info.masterTitle || '조회 결과', g1));
     }
+    var page = '<xf:group class="content">\n' +
+      '    <xf:group class="sec sec-1">\n' +
+      '        <xf:group class="sec-header for-main">\n' +
+      indent(s.udcBodyTag, 12) + '\n' +
+      '        </xf:group>\n' +
+      '        <xf:group class="sec-body">\n' +
+      indent(body.join('\n'), 12) + '\n' +
+      '        </xf:group>\n' +
+      '    </xf:group>\n' +
+      '</xf:group>';
 
     var x = [];
     x.push('<?xml version="1.0" encoding="UTF-8"?>');
@@ -690,7 +708,7 @@
     x.push(']]></script>');
     x.push('</head>');
     x.push('<body ev:onpageload="scwin.onpageload">');
-    x.push(indent(body.join('\n'), 4));
+    x.push(indent(page, 4));
     x.push('</body>');
     x.push('</html>');
     return x.join('\n') + '\n';
