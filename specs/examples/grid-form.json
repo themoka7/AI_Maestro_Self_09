@@ -1,0 +1,15 @@
+{
+  "screenType": "grid-form",
+  "design": { "searchCols": 2, "excel": false, "rowNum": true },
+  "info": { "screenId": "SYS_NOTICE_MNG", "screenNm": "공지 관리", "db": "SYS", "table": "[dbo].[SYS_NOTICE]", "spSearch": "SYS_공지_조회", "spSave": "SYS_공지_저장", "masterTitle": "공지 목록", "detailTitle": "공지 내용" },
+  "conds": [
+    { "id": "YEAR", "nm": "연도", "type": "YEAR" },
+    { "id": "TITLE", "nm": "제목", "type": "TEXT" }
+  ],
+  "cols": [
+    { "id": "NOTICE_NO", "nm": "번호", "width": 70, "key": true },
+    { "id": "TITLE", "nm": "제목", "width": 300, "align": "left", "edit": "text", "req": true, "maxbyte": 200 },
+    { "id": "POST_DATE", "nm": "게시일", "width": 100, "edit": "date", "req": true },
+    { "id": "USE_YN", "nm": "사용", "width": 70, "edit": "select", "code": "0000_USE_YN" }
+  ]
+}

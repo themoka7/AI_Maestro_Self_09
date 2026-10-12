@@ -1,0 +1,16 @@
+{
+  "screenType": "meta",
+  "design": { "guide": true, "guideText": "기준일 재학생 기준입니다." },
+  "info": { "screenId": "AI_COMPLETE_RATE", "screenNm": "AI 이수율 현황", "db": "HAKJUKLOG", "table": "[dbo].[HJ_STDT_INFO_DATE_DIVIDE_HISTORY]", "spSearch": "HJ_AI이수율_현황_조회" },
+  "conds": [
+    { "id": "SYEAR", "nm": "학년도", "type": "SYEAR", "req": true },
+    { "id": "TERM_GCD", "nm": "학기", "type": "TERM" },
+    { "id": "SESSION_USER_DEPT_CD", "nm": "사용자부서", "type": "SESSION" }
+  ],
+  "cols": [
+    { "id": "SYEAR", "nm": "학년도" },
+    { "id": "DEPT_NM", "nm": "학과명" },
+    { "id": "STDT_CNT", "nm": "재학생수" },
+    { "id": "AI_CNT", "nm": "AI 이수자수" }
+  ]
+}

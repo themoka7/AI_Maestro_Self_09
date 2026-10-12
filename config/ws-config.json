@@ -1,0 +1,40 @@
+{
+  "settings": {
+    "verified": false,
+    "bindUrl": "/core/function/bindProc",
+    "udcHeadTag": "",
+    "udcBodyTag": "<w2:udc_top_auth_btn id=\"udc_top_auth_btn\" style=\"\"></w2:udc_top_auth_btn>",
+    "udcInit": "udc_top_auth_btn.init({\n    \"_grid\" : {GRID},\n    \"callSpNm\" : \"{SEARCH_SP}\",\n    \"_excelDownUseYn\" : \"{EXCEL_YN}\"\n});",
+    "codeLabelCol": "COMMON_DETAIL_CD_KOR_NM",
+    "codeValueCol": "COMMON_DETAIL_CD",
+    "alertFn": "alert",
+    "termCode": "0001_TERM_GCD",
+    "defaultSystemGcd": "0001"
+  },
+  "dbs": [
+    "SYS",
+    "LECTURE",
+    "HAKJUKLOG",
+    "GRADE"
+  ],
+  "codes": [
+    {
+      "group": "0001_TERM_GCD",
+      "nm": "학기",
+      "etc": "",
+      "note": "0012 = 1학기 계열 마지막, 0022 = 2학기 계열 마지막"
+    },
+    {
+      "group": "0000_DB_SYSTEM_GCD",
+      "nm": "DB 시스템구분",
+      "etc": "",
+      "note": "0001 SESDB, 0002 ORGDB"
+    },
+    {
+      "group": "0000_USE_YN",
+      "nm": "사용여부",
+      "etc": "",
+      "note": "예시 - 실제 그룹코드 확인 필요"
+    }
+  ]
+}

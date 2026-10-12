@@ -1,0 +1,16 @@
+{
+  "screenType": "edit",
+  "design": { "searchCols": 4, "excel": true, "rowNum": true },
+  "info": { "screenId": "SYS_CODE_MNG", "screenNm": "업무 코드 관리", "db": "SYS", "table": "[dbo].[SYS_SAMPLE_CODE]", "spSearch": "SYS_업무코드_조회", "spSave": "SYS_업무코드_저장" },
+  "conds": [
+    { "id": "USE_YN", "nm": "사용여부", "type": "SELECT", "code": "0000_USE_YN" },
+    { "id": "CODE_NM", "nm": "코드명", "type": "TEXT" }
+  ],
+  "cols": [
+    { "id": "CODE", "nm": "코드", "width": 90, "edit": "text", "req": true, "maxbyte": 10, "key": true },
+    { "id": "CODE_NM", "nm": "코드명", "width": 200, "align": "left", "edit": "text", "req": true, "maxbyte": 100 },
+    { "id": "USE_YN", "nm": "사용여부", "width": 80, "edit": "select", "code": "0000_USE_YN", "req": true, "maxbyte": 1 },
+    { "id": "SORT_ORD", "nm": "정렬순서", "width": 80, "align": "right", "edit": "number" },
+    { "id": "START_DATE", "nm": "시작일", "width": 100, "edit": "date", "maxbyte": 8 }
+  ]
+}

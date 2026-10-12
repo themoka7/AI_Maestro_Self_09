@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebSquare 화면 생성기</title>
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">W5</span>
+    <div>
+      <h1>WebSquare 화면 생성기</h1>
+      <p>유형 → 디자인 → 조회조건·컬럼 → 공통코드를 고르면 화면 XML, SP, 에이전트 요청문이 나옵니다.</p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <select id="exampleSel" aria-label="예제 불러오기">
+      <option value="">예제 불러오기…</option>
+      <option value="search">조회형 — 개설강좌 현황</option>
+      <option value="edit">그리드 편집형 — 업무 코드 관리</option>
+      <option value="md-tb">마스터-디테일 — 강좌별 수강생</option>
+      <option value="grid-form">목록 + 상세 폼 — 공지 관리</option>
+      <option value="meta">공통 데이터 조회 — AI 이수율</option>
+    </select>
+    <label class="btn ghost">명세 열기<input type="file" id="specFile" accept=".json" hidden></label>
+    <button class="btn ghost" id="resetBtn">새로 만들기</button>
+    <button class="btn" id="settingsBtn">사내 템플릿 설정</button>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="steps" id="steps">
+    <div class="step">
+      <div class="step-head"><span class="num">1</span><h2>화면 유형</h2></div>
+      <div class="type-grid" id="typeGrid"></div>
+    </div>
+
+    <div class="step" id="stepDesign">
+      <div class="step-head"><span class="num">2</span><h2>디자인</h2></div>
+      <div class="form-grid">
+        <div class="field">
+          <span class="lbl">검색영역 한 줄 칸 수</span>
+          <div class="seg" id="segCols">
+            <button data-v="2">2칸 (flex-col-2)</button>
+            <button data-v="4">4칸 (flex-col-4)</button>
+          </div>
+        </div>
+        <label class="field chk"><input type="checkbox" id="dRowNum"> 그리드 행번호</label>
+        <label class="field chk"><input type="checkbox" id="dExcel"> 상단 엑셀 다운로드 (UDC)</label>
+        <label class="field chk"><input type="checkbox" id="dGuide"> 안내문구 표시</label>
+        <label class="field wide" id="guideWrap"><span class="lbl">안내문구 (줄마다 한 문장)</span><textarea id="dGuideText" rows="2"></textarea></label>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head"><span class="num">3</span><h2>기본 정보</h2></div>
+      <div class="form-grid" id="infoGrid"></div>
+    </div>
+
+    <div class="step">
+      <div class="step-head"><span class="num">4</span><h2>조회조건 <small>순서 = SP 파라미터 선언 순서</small></h2></div>
+      <div id="condTable"></div>
+    </div>
+
+    <div class="step">
+      <div class="step-head"><span class="num">5</span><h2 id="colTitle">결과 컬럼</h2></div>
+      <div id="colTable"></div>
+      <div id="dcolWrap">
+        <h3 class="sub">상세 컬럼</h3>
+        <div id="dcolTable"></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head"><span class="num">6</span><h2>공통코드 <small>그룹은 시스템구분 포함 (예: 0001_TERM_GCD)</small></h2></div>
+      <p class="hint">여기 등록한 코드는 조회조건·컬럼의 공통코드 칸에서 고를 수 있습니다. 조건(SQL 조각)을 넣으면 <code>common.getCodeByEtcParam</code> 으로 생성됩니다. 팀 공용으로 쓰려면 “설정 JSON 받기” 후 <code>config/ws-config.json</code> 에 커밋하세요.</p>
+      <div id="codeTable"></div>
+    </div>
+  </section>
+
+  <section class="output">
+    <div class="out-tabs" id="outTabs"></div>
+    <div class="warn" id="warnBox"></div>
+    <div class="out-body">
+      <div id="previewPane" class="preview"></div>
+      <div id="codePane" class="code-pane" hidden>
+        <div class="code-actions">
+          <span id="codeName"></span>
+          <button class="btn sm ghost" id="copyBtn">복사</button>
+          <button class="btn sm" id="dlBtn">다운로드</button>
+        </div>
+        <pre><code id="codeView"></code></pre>
+      </div>
+    </div>
+    <div class="out-foot">
+      <button class="btn" id="dlAllBtn">전체 파일 다운로드</button>
+      <span class="hint">에이전트 요청문을 Claude Code 에 붙여넣으면 websquare-dev 에이전트가 이어서 다듬습니다.</span>
+    </div>
+  </section>
+</main>
+
+<dialog id="settingsDlg">
+  <form method="dialog" class="dlg">
+    <h2>사내 템플릿 설정</h2>
+    <p class="hint">프레임워크마다 다른 부분입니다. 기존 업무 화면(예: 개설강좌 일람표) XML에서 그대로 복사해 넣고 “확인함”을 체크하세요. 이 브라우저에 저장되며, 팀 공유는 “설정 JSON 받기”로 <code>config/ws-config.json</code> 에 반영합니다.</p>
+    <div class="form-grid" id="settingsGrid"></div>
+    <div class="dlg-actions">
+      <button class="btn ghost" type="button" id="cfgDownload">설정 JSON 받기</button>
+      <button class="btn ghost" type="button" id="cfgReset">저장소 기본값으로</button>
+      <button class="btn" value="close">닫기</button>
+    </div>
+  </form>
+</dialog>
+
+<datalist id="codeList"></datalist>
+<div class="toast" id="toast"></div>
+
+<script src="assets/generator.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

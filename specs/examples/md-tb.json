@@ -1,0 +1,20 @@
+{
+  "screenType": "md-tb",
+  "design": { "searchCols": 4, "excel": true, "rowNum": true },
+  "info": { "screenId": "CLS_SUBJ_STDT", "screenNm": "강좌별 수강생", "db": "LECTURE", "table": "[dbo].[CLS_OPEN_SUBJ]", "detailTable": "[dbo].[CLS_SUGANG]", "spSearch": "CLS_강좌별수강생_강좌_조회", "spDetail": "CLS_강좌별수강생_수강생_조회", "mdKey": "SUBJ_KEY", "masterTitle": "강좌", "detailTitle": "수강생" },
+  "conds": [
+    { "id": "SYEAR", "nm": "학년도", "type": "SYEAR", "req": true },
+    { "id": "TERM_GCD", "nm": "학기", "type": "TERM", "req": true },
+    { "id": "SESSION_USER_DEPT_CD", "nm": "사용자부서", "type": "SESSION" }
+  ],
+  "cols": [
+    { "id": "SUBJ_KEY", "nm": "강좌키", "hidden": true, "key": true },
+    { "id": "SUBJ_NO", "nm": "교과목번호", "width": 100 },
+    { "id": "SUBJ_NM", "nm": "교과목명", "width": 220, "align": "left" }
+  ],
+  "dcols": [
+    { "id": "STDT_NO", "nm": "학번", "width": 100, "key": true },
+    { "id": "STDT_NM", "nm": "성명", "width": 90 },
+    { "id": "DEPT_NM", "nm": "학과", "width": 160, "align": "left" }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "screenType": "search",
+  "design": { "searchCols": 4, "guide": true, "guideText": "당해 연도는 성적 확정 전 잠정치입니다.", "excel": true, "rowNum": true },
+  "info": { "screenId": "CLS_SAMPLE_LIST", "screenNm": "개설강좌 현황 조회", "author": "", "db": "LECTURE", "table": "[dbo].[CLS_OPEN_SUBJ]", "spSearch": "CLS_개설강좌_현황_조회", "masterTitle": "개설강좌 목록" },
+  "conds": [
+    { "id": "SYEAR", "nm": "학년도", "type": "SYEAR", "req": true },
+    { "id": "TERM_GCD", "nm": "학기", "type": "TERM", "code": "0001_TERM_GCD", "req": true },
+    { "id": "SUBJ_NM", "nm": "교과목명", "type": "TEXT" },
+    { "id": "SESSION_USER_ID", "nm": "사용자ID", "type": "SESSION" }
+  ],
+  "cols": [
+    { "id": "SYEAR", "nm": "학년도", "width": 70, "key": true },
+    { "id": "TERM_GCD", "nm": "학기", "width": 70, "key": true },
+    { "id": "SUBJ_NO", "nm": "교과목번호", "width": 100, "key": true },
+    { "id": "SUBJ_NM", "nm": "교과목명", "width": 220, "align": "left" },
+    { "id": "STDT_CNT", "nm": "수강인원", "width": 80, "align": "right" }
+  ]
+}
