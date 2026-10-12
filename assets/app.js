@@ -418,7 +418,7 @@
 
   function wfGrid(title, cols, opt) {
     var visible = cols.filter(function (c) { return !c.hidden; });
-    var html = '<div class="wf-sec"><h4><span>' + escHtml(title) + '</span><em>(총 <b>0</b>건)</em><small>' + (opt.edit ? '편집 그리드' : '조회 전용') + '</small></h4><div class="wf-table"><table><thead><tr>';
+    var html = '<div class="wf-sec"><h4><span>' + escHtml(title) + '</span><em>(총 <b>0</b>건)</em>' + (opt.btns ? '<span class="wf-btns"><i>신규</i><i>삭제</i><i class="pri">저장</i></span>' : '<small>' + (opt.edit ? '편집 그리드' : '조회 전용') + '</small>') + '</h4><div class="wf-table"><table><thead><tr>';
     if (opt.rowNum) html += '<th>No</th>';
     if (opt.edit) html += '<th>상태</th>';
     visible.forEach(function (c) { html += '<th style="min-width:' + Math.min(c.width || 80, 220) * 0.6 + 'px">' + escHtml(c.nm || c.id) + '</th>'; });
@@ -442,12 +442,13 @@
     var t = s.screenType;
     var d = s.design;
     var html = '<div class="wf">';
+    var dEdit = s.dcols.some(function (c) { return c.edit !== 'none'; });
+    var topEdit = t === 'edit' || t === 'grid-form';
     if (t === 'meta') {
       html += '<div class="wf-meta">공통 데이터 조회 화면(<b>commQueryView</b>)에서 아래처럼 보입니다. 화면 XML은 만들지 않고, <b>조회 SP</b>와 <b>메타 등록값</b>을 생성합니다.</div>';
     } else {
-      var edit = t === 'edit' || t === 'grid-form' || ((t === 'md-tb' || t === 'md-lr') && s.dcols.some(function (c) { return c.edit !== 'none'; }));
       html += '<div class="wf-page"><div class="wf-crumb">Home › 학사 › … </div><div class="wf-head"><h3>' + escHtml(s.info.screenNm || '화면명') + '</h3>' +
-        '<div class="wf-top"><i>조회</i>' + (edit ? '<i>신규</i><i>삭제</i><i>저장</i>' : '') + (d.excel ? '<i class="xls">엑셀</i>' : '') + '</div></div></div>';
+        '<div class="wf-top"><i>조회</i>' + (topEdit ? '<i class="xls">신규</i><i class="xls">삭제</i><i>저장</i>' : '') + (d.excel ? '<i class="xls">엑셀</i>' : '') + '</div></div></div>';
     }
     var cells = G.condCells(s).map(function (cell) {
       return { label: cell.label, req: cell.req, boxes: cell.conds.map(compLabel) };
@@ -460,17 +461,17 @@
     var info = s.info;
     if (t === 'md-tb') {
       html += wfGrid(info.masterTitle || '마스터', s.cols, { rowNum: d.rowNum });
-      html += wfGrid(info.detailTitle || '상세', s.dcols, { rowNum: d.rowNum, edit: s.dcols.some(function (c) { return c.edit !== 'none'; }) });
+      html += wfGrid(info.detailTitle || '상세', s.dcols, { rowNum: d.rowNum, edit: dEdit, btns: dEdit });
     } else if (t === 'md-lr') {
-      html += '<div class="wf-split">' + wfGrid(info.masterTitle || '마스터', s.cols, { rowNum: d.rowNum }) +
-        wfGrid(info.detailTitle || '상세', s.dcols, { rowNum: d.rowNum, edit: s.dcols.some(function (c) { return c.edit !== 'none'; }) }) + '</div>';
+      html += '<div class="wf-split">' + wfGrid(info.masterTitle || '마스터', s.cols, { rowNum: d.rowNum }) + '<div class="bar" title="드래그하여 영역확장"></div>' +
+        wfGrid(info.detailTitle || '상세', s.dcols, { rowNum: d.rowNum, edit: dEdit, btns: dEdit }) + '</div>';
     } else if (t === 'grid-form') {
       html += wfGrid(info.masterTitle || '목록', s.cols, { rowNum: d.rowNum });
       var fcells = s.cols.filter(function (c) { return !c.hidden; }).map(function (c) {
         var box = c.edit === 'select' ? '선택 ▾' : c.edit === 'date' ? 'YYYY-MM-DD 📅' : c.edit === 'check' ? '☐' : c.edit === 'none' ? '(읽기)' : '';
         return { label: c.nm, req: c.req, boxes: [box] };
       });
-      html += '<div class="wf-sec"><h4>' + escHtml(info.detailTitle || '상세 정보') + '<small>입력 폼</small></h4><div class="wf-form">' + wfSearch(fcells, Number(d.searchCols) || 4) + '</div></div>';
+      html += '<div class="wf-form">' + wfSearch(fcells, 2) + '</div>';
     } else {
       html += wfGrid(info.masterTitle || '조회 결과', s.cols, { rowNum: d.rowNum, edit: t === 'edit' });
     }

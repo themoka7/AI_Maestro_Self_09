@@ -1,0 +1,31 @@
+{
+  "screenType": "md-lr",
+  "design": { "searchCols": 2, "excel": false, "rowNum": true },
+  "info": {
+    "screenId": "CommonDataMngSample", "screenNm": "데이터조회(관리) 예시", "db": "SYS",
+    "table": "[dbo].[SYS_COMMON_DATA_SEARCH_INFO]", "detailTable": "[dbo].[SYS_COMMON_DATA_SEARCH_PARAM]",
+    "spSearch": "SYS_조회메타마스터_조회", "spDetail": "SYS_조회메타파라미터_조회", "spDetailSave": "SYS_조회메타파라미터_저장",
+    "mdKey": "ID", "masterTitle": "조회 메타 마스터", "detailTitle": "파라미터 상세 메타"
+  },
+  "conds": [
+    { "id": "ID", "nm": "조회 ID", "type": "TEXT" },
+    { "id": "NM", "nm": "조회명", "type": "TEXT" }
+  ],
+  "cols": [
+    { "id": "ID", "nm": "조회 ID", "width": 120, "key": true },
+    { "id": "NM", "nm": "조회명", "width": 150, "align": "left" },
+    { "id": "DB_NM", "nm": "DB명", "width": 100 },
+    { "id": "PROC_NM", "nm": "프로시저명", "width": 180, "align": "left" },
+    { "id": "USE_YN", "nm": "사용여부", "width": 80 },
+    { "id": "AUTH_USER_IDS", "nm": "허용사번", "width": 120 },
+    { "id": "AUTH_DEPT_CDS", "nm": "허용부서", "width": 120 }
+  ],
+  "dcols": [
+    { "id": "ID", "nm": "조회 ID", "hidden": true, "key": true },
+    { "id": "PARAM_ID", "nm": "파라미터ID", "width": 120, "edit": "text", "req": true, "maxbyte": 50, "key": true },
+    { "id": "PARAM_NM", "nm": "파라미터명", "width": 130, "edit": "text", "req": true, "maxbyte": 100 },
+    { "id": "PARAM_TYPE", "nm": "유형", "width": 100, "edit": "text", "req": true, "maxbyte": 20 },
+    { "id": "MANDATORY_YN", "nm": "필수", "width": 60, "edit": "check" },
+    { "id": "SORT_ORD", "nm": "순번", "width": 60, "align": "right", "edit": "number" }
+  ]
+}

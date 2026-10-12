@@ -120,6 +120,34 @@ content
 - 사내 공통 CSS 유틸: `form-w-xxl`(200px)·`form-w-xxxl`(300px), `height-3h`~`height-5h`(vh 높이), `td-height-2`~`5`(그리드 행 높이), `label.info`(ⓘ 표시), `resizer-wrap > resizer-left / resizer-bar / resizer-right`(좌우 분할), `novisible`, `pointer`
 - 포인트 색 `#014a98`, 편집 가능 그리드 셀은 공통 CSS가 포인트 색 10% 배경을 자동 적용
 
+### 확인된 화면 패턴 (실제 개발 화면 DOM 기준)
+
+**상단 UDC 버튼은 화면마다 다르게 렌더된다.** 데이터조회: 조회(`btn-primary`)·엑셀(`btn-outline-primary`). 데이터조회(관리): 조회·신규·삭제(`btn-outline-primary`)·저장(`btn-primary`). 버튼 구성은 UDC init 옵션이나 메뉴 권한이 정하는 것으로 보이며, 정확한 옵션은 원본 XML로 확인할 것.
+
+**좌우 마스터-디테일 (데이터조회(관리))** — resizer 영역은 `xf:group` 이 아니라 XML 안의 **일반 HTML div** 로 작성한다.
+
+```
+xf:group class="row"
+ └ div.resizer-wrap
+    ├ div.resizer-left style="width:50%;"
+    │  └ xf:group class="col-md-12 padding-r-0"
+    │     ├ sec sec-2 (마스터 그리드, 그리드 style="height:350px;")
+    │     └ b-table-box flex-col-2 style="margin-top:10px;"  ← 마스터 상세폼
+    ├ div.resizer-bar data-toggle="tooltip" data-original-title="드래그하여 영역확장"
+    └ div.resizer-right
+       └ xf:group class="col-md-12 padding-l-0"
+          ├ sec sec-2 (상세 그리드, btn-box 에 섹션 전용 버튼)
+          └ b-table-box flex-col-2 style="margin-top:10px;"  ← 상세폼
+```
+
+- 섹션 전용 버튼: `w2:trigger class="btn btn-outline-primary"`(재배열·△·▽·신규·삭제), 저장만 `btn btn-primary`. id 예 `btn_grid2_new`.
+- 그리드 아래 상세폼은 `search-box` 로 감싸지 않고 `b-table-box flex-col-2 style="margin-top:10px;"` 를 바로 둔다.
+- 폼 입력: `form-control w-100`, 키 항목은 disabled, 긴 텍스트는 `b-row-item merge-2` + `b-con-box mb-1 mb-md-2 style="height:80px;"` 안에 `w2:textarea class="form-control w-100 h-100"`.
+- 사용여부 같은 Y/N 은 `w2checkbox`, 정렬순번은 `w2:spinner class="type1 form-w-xl"`.
+- 관리용 편집 그리드는 상태 컬럼(`rowStatusVisible`)을 보이고 그룹정렬 영역이 켜져 있다. 조회 전용 그리드는 둘 다 끈다(5장).
+
+**데이터조회(조회 전용)** — 조회 선택 콤보는 `b-row-item merge-2` + 나머지 `b-blank merge-2`. 결과 그리드 `grid_result` 는 C01~C40 슬롯, 헤더 H01~H40, 본문 `textAlign="left"`, 섹션 btn-box 에 화면 자체 엑셀 버튼(`btn_excel`).
+
 ## 7. 메타 기반 공통 데이터 조회
 
 ### 구성

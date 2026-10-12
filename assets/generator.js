@@ -224,7 +224,7 @@
     var st = half ? ' style="width:50%;"' : ' style=""';
     switch (c.type) {
       case 'NUMBER':
-        return '<xf:input id="' + id + '" class="form-control" ref="' + ref + '" dataType="number" allowChar="0-9"' + st + '></xf:input>';
+        return '<xf:input id="' + id + '" class="form-control w-100" ref="' + ref + '" dataType="number" allowChar="0-9"' + st + '></xf:input>';
       case 'SELECT': case 'TERM': case 'YEAR':
         return '<xf:select1 id="' + id + '" class="form-control" ref="' + ref + '" appearance="minimal" chooseOption="true" chooseOptionLabel="' + (c.req ? '선택' : '전체') + '" displayMode="label" direction="auto" submenuSize="auto"' + st + '>\n' +
           '    <xf:choices></xf:choices>\n' +
@@ -236,7 +236,7 @@
       case 'SYEAR':
         return '<w2:spinner id="' + id + '" ref="' + ref + '" skin="type1" buttonSize="30" min="1996" max="2100"' + st + '></w2:spinner>';
       default:
-        return '<xf:input id="' + id + '" class="form-control" ref="' + ref + '"' + st + '></xf:input>';
+        return '<xf:input id="' + id + '" class="form-control w-100" ref="' + ref + '"' + st + '></xf:input>';
     }
   }
 
@@ -284,7 +284,7 @@
     var ro = c.edit === 'none' ? ' readOnly="true"' : '';
     switch (c.edit) {
       case 'number':
-        return '<xf:input id="' + id + '" class="form-control" ref="' + ref + '" dataType="number" allowChar="0-9"' + (c.maxbyte ? ' maxByteLength="' + c.maxbyte + '"' : '') + ' style=""></xf:input>';
+        return '<xf:input id="' + id + '" class="form-control w-100" ref="' + ref + '" dataType="number" allowChar="0-9"' + (c.maxbyte ? ' maxByteLength="' + c.maxbyte + '"' : '') + ' style=""></xf:input>';
       case 'select':
         return '<xf:select1 id="' + id + '" class="form-control" ref="' + ref + '" appearance="minimal" chooseOption="true" chooseOptionLabel="선택" displayMode="label" direction="auto" submenuSize="auto" style="">\n' +
           '    <xf:choices></xf:choices>\n' +
@@ -301,7 +301,7 @@
           '    </xf:choices>\n' +
           '</xf:select>';
       default:
-        return '<xf:input id="' + id + '" class="form-control" ref="' + ref + '"' + ro + (c.maxbyte ? ' maxByteLength="' + c.maxbyte + '"' : '') + ' style=""></xf:input>';
+        return '<xf:input id="' + id + '" class="form-control w-100" ref="' + ref + '"' + ro + (c.maxbyte ? ' maxByteLength="' + c.maxbyte + '"' : '') + ' style=""></xf:input>';
     }
   }
 
@@ -309,7 +309,7 @@
     var cells = spec.cols.filter(function (c) { return !c.hidden; }).map(function (c) {
       return { label: c.nm, req: c.req, comps: [formComp(c)] };
     });
-    return tableBox(cells, Number(spec.design.searchCols) || 4);
+    return tableBox(cells, 2).replace('<xf:group class="b-table-box flex-col-2">', '<xf:group class="b-table-box flex-col-2" style="margin-top:10px;">');
   }
 
   function gridXml(gid, dlt, cols, opt) {
@@ -357,23 +357,37 @@
   }
 
   /* sec sec-2 : 실제 화면 DOM 기준 (sec-header > header-gr > title-box, sec-body > gr) */
-  function section(title, body, style) {
-    return '<xf:group class="sec sec-2"' + (style ? ' style="' + style + '"' : '') + '>\n' +
+  function trigger(b) {
+    return '<w2:trigger id="' + b.id + '" class="btn ' + (b.primary ? 'btn-primary' : 'btn-outline-primary') + '" ev:onclick="scwin.' + b.id + '_onclick">\n' +
+      '    <xf:label><![CDATA[' + b.label + ']]></xf:label>\n' +
+      '</w2:trigger>';
+  }
+
+  /* sec sec-2 : 실제 화면 DOM 기준 (sec-header > header-gr > title-box, btn-box, sec-body > gr) */
+  function section(title, body, btns, after) {
+    var bb = (btns || []).map(function (b) { return indent(trigger(b), 12); }).join('\n');
+    return '<xf:group class="sec sec-2">\n' +
       '    <xf:group class="sec-header">\n' +
       '        <xf:group class="header-gr">\n' +
       '            <xf:group class="title-box">\n' +
       '                <w2:textbox class="sec-title" label="' + esc(title) + '" tagname="h3"></w2:textbox>\n' +
       '            </xf:group>\n' +
       '        </xf:group>\n' +
-      '        <xf:group class="btn-box"></xf:group>\n' +
+      (bb ? '        <xf:group class="btn-box">\n' + bb + '\n        </xf:group>\n' : '        <xf:group class="btn-box"></xf:group>\n') +
       '    </xf:group>\n' +
       '    <xf:group class="sec-body">\n' +
       '        <xf:group class="gr">\n' +
       indent(body, 12) + '\n' +
       '        </xf:group>\n' +
       '    </xf:group>\n' +
-      '</xf:group>';
+      '</xf:group>' + (after ? '\n' + after : '');
   }
+
+  var DETAIL_BTNS = [
+    { id: 'btn_detail_new', label: '신규' },
+    { id: 'btn_detail_delete', label: '삭제' },
+    { id: 'btn_detail_save', label: '저장', primary: true }
+  ];
 
   function dataCollection(spec) {
     var out = [];
@@ -451,10 +465,10 @@
 
     /* onpageload */
     var load = [];
-    var gridMain = isMd && editDetail ? 'grd_02' : 'grd_01';
+    var gridMain = 'grd_01';
     load.push(s.udcInit
       .replace(/\{GRID\}/g, gridMain)
-      .replace(/\{SEARCH_SP\}/g, isMd && editDetail ? info.spDetail : info.spSearch)
+      .replace(/\{SEARCH_SP\}/g, info.spSearch)
       .replace(/\{EXCEL_YN\}/g, spec.design.excel ? 'Y' : 'N'));
     if (codes.length) load.push('scwin.fn_initCode();');
     load.push('scwin.fn_initCond();');
@@ -583,7 +597,9 @@
         });
       }
       nb.push(editGrid + '.setFocusedCell(idx, ' + jsStr(first ? first.id : editCols[0] ? editCols[0].id : '') + ', ' + (t === 'grid-form' ? 'false' : 'true') + ');');
-      parts.push(fn('fn_commNew', '신규', nb.join('\n')));
+      var N = editDetail ? { add: 'fn_detailNew', del: 'fn_detailDelete', save: 'fn_detailSave', cb: 'fn_detailSaveCallback' }
+        : { add: 'fn_commNew', del: 'fn_commDelete', save: 'fn_commSave', cb: 'fn_saveCallback' };
+      parts.push(fn(N.add, editDetail ? '상세 신규' : '신규', nb.join('\n')));
 
       var delb = [];
       delb.push('var idx = ' + editGrid + '.getFocusedRowIndex();');
@@ -596,7 +612,7 @@
       delb.push('} else {');
       delb.push('    ' + editDlt + '.deleteRow(idx);');
       delb.push('}');
-      parts.push(fn('fn_commDelete', '삭제', delb.join('\n')));
+      parts.push(fn(N.del, editDetail ? '상세 삭제' : '삭제', delb.join('\n')));
 
       var checkInfo = editCols.filter(function (c) { return c.req || c.maxbyte; }).map(function (c) {
         var o = '{ id : ' + jsStr(c.id);
@@ -615,8 +631,8 @@
       svb.push('    ' + A + '("변경된 내용이 없습니다.");');
       svb.push('    return;');
       svb.push('}');
-      svb.push('common.confirm("저장하시겠습니까?", "fn_saveCallback");');
-      parts.push(fn('fn_commSave', '저장', svb.join('\n')));
+      svb.push('common.confirm("저장하시겠습니까?", "' + N.cb + '");');
+      parts.push(fn(N.save, editDetail ? '상세 저장' : '저장', svb.join('\n')));
 
       var cb = [];
       cb.push('if (!bool) return;');
@@ -633,7 +649,15 @@
         params: ['JSON_DATA', 'SESSION_USER_ID', 'SESSION_USER_IP'],
         success: A + '(data.O_CNT + "건 저장되었습니다.");\n' + (editMaster ? 'scwin.fn_commSearch();' : 'scwin.fn_searchDetail();')
       }, s));
-      parts.push(fn('fn_saveCallback', '저장 실행', cb.join('\n')));
+      parts.push(fn(N.cb, '저장 실행', cb.join('\n')));
+      if (editDetail) {
+        parts.push(fn('btn_detail_new_onclick', '상세 신규 버튼', 'scwin.fn_detailNew();'));
+        parts.push(fn('btn_detail_delete_onclick', '상세 삭제 버튼', 'scwin.fn_detailDelete();'));
+        parts.push(fn('btn_detail_save_onclick', '상세 저장 버튼', 'scwin.fn_detailSave();'));
+        parts.push(fn('fn_commNew', '신규', ''));
+        parts.push(fn('fn_commDelete', '삭제', ''));
+        parts.push(fn('fn_commSave', '저장', ''));
+      }
     } else {
       parts.push(fn('fn_commNew', '신규', ''));
       parts.push(fn('fn_commDelete', '삭제', ''));
@@ -657,22 +681,29 @@
         '</xf:group>');
     }
     var g1 = gridXml('grd_01', 'dlt_01', spec.cols, spec.design);
+    var g2 = (t === 'md-tb' || t === 'md-lr') ? gridXml('grd_02', 'dlt_02', spec.dcols, spec.design) : '';
     if (t === 'md-tb') {
       body.push(section(info.masterTitle || '마스터', g1));
-      body.push(section(info.detailTitle || '상세', gridXml('grd_02', 'dlt_02', spec.dcols, spec.design)));
+      body.push(section(info.detailTitle || '상세', g2, hasEdit(spec.dcols) ? DETAIL_BTNS : null));
     } else if (t === 'md-lr') {
-      body.push('<xf:group class="resizer-wrap">\n' +
-        '    <xf:group class="resizer-left" style="width:50%;">\n' +
-        indent(section(info.masterTitle || '마스터', g1, 'width:100%;'), 8) + '\n' +
-        '    </xf:group>\n' +
-        '    <xf:group class="resizer-right">\n' +
-        indent(section(info.detailTitle || '상세', gridXml('grd_02', 'dlt_02', spec.dcols, spec.design), 'width:100%;'), 8) + '\n' +
-        '    </xf:group>\n' +
+      body.push('<xf:group class="row">\n' +
+        '    <div class="resizer-wrap">\n' +
+        '        <div class="resizer-left" style="width:50%;">\n' +
+        '            <xf:group class="col-md-12 padding-r-0">\n' +
+        indent(section(info.masterTitle || '마스터', g1), 16) + '\n' +
+        '            </xf:group>\n' +
+        '        </div>\n' +
+        '        <div class="resizer-bar" data-toggle="tooltip" data-original-title="드래그하여 영역확장"></div>\n' +
+        '        <div class="resizer-right">\n' +
+        '            <xf:group class="col-md-12 padding-l-0">\n' +
+        indent(section(info.detailTitle || '상세', g2, hasEdit(spec.dcols) ? DETAIL_BTNS : null), 16) + '\n' +
+        '            </xf:group>\n' +
+        '        </div>\n' +
+        '    </div>\n' +
         '</xf:group>');
     } else if (t === 'grid-form') {
       var gridOnly = spec.cols.map(function (c) { var o = {}, k; for (k in c) o[k] = c[k]; o.edit = 'none'; return o; });
-      body.push(section(info.masterTitle || '목록', gridXml('grd_01', 'dlt_01', gridOnly, spec.design)));
-      body.push(section(info.detailTitle || '상세 정보', formBox(spec)));
+      body.push(section(info.masterTitle || '목록', gridXml('grd_01', 'dlt_01', gridOnly, spec.design), null, formBox(spec)));
     } else {
       body.push(section(info.masterTitle || '조회 결과', g1));
     }
